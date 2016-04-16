@@ -14,9 +14,11 @@
             [hiccups.runtime]
             [modern-cljs.shopping.validators :refer [validate-shopping-field
                                                      validate-shopping-form]]
-            [shoreleave.remotes.http-rpc :refer [remote-callback]])
+            [shoreleave.remotes.http-rpc :refer [remote-callback]]
+            [reagent.core :as reagent])
   (:require-macros [hiccups.core :refer [html]]
-                   [shoreleave.remotes.macros :as macros]))
+                   [shoreleave.remotes.macros :as macros]
+                   [reagent.ratom :refer [reaction]]))
 
 (defn calculate! []
   (let [quantity (value (by-id "quantity"))
