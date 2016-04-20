@@ -1,5 +1,6 @@
 (ns modern-cljs.reagent
   (:require [reagent.core :as r]
+            [clojure.string :as string]
             cljsjs.marked))
 
 (def data (r/atom [{:id 1
@@ -21,25 +22,43 @@
    (for [{:keys [id author text]} @comments] 
      ^{:key id} [comment-component author text])])
 
-(defn comment-form [data]
-  [:form
-        [:input {:type "text"
-                 :placeholder "Your name"}]
-        [:input {:type "text"
-                 :placeholder "Say something"}]
-        [:input {:type "button" :value "Post"
-                 :on-click #(.log js/console "Posted")}]])
+(defn form-on-click [_ comment]
+  (let [author (string/trim (:author @comment))
+        text (string/trim (:text @comment))]
+    (reset! comment {:author "" :text ""})
+    (when-not (or (string/blank? author) (string/blank? text))
+      (swap! data conj {:id (.getTime (js/Date.)) :author author :text text}))))
 
-(defn comment-box []
+(defn comment-form []
+  (let [comment (r/atom {:author "" :text ""})] 
+    (fn [] 
+      [:form
+       [:input {:type "text"
+                :placeholder "Your name"
+                :value (:author @comment)
+                :on-change #(swap! comment assoc :author (-> %
+                                                             .-target
+                                                             .-value))}]
+       [:input {:type "text"
+                :placeholder "Say something"
+                :value (:text @comment)
+                :on-change #(swap! comment assoc :text (-> %
+                                                           .-target
+                                                           .-value))}]
+       [:input {:type "button"
+                :value "Post"
+                :on-click #(form-on-click % comment)}]])))
+
+(defn comment-box [comments]
   [:div 
    [:h1 "Comments"]
-   [comment-list data]
-   [comment-form data]])
+   [comment-list comments]
+   [comment-form]])
 
 (defn ^:export init []
   (if (and js/document
            (aget js/document "getElementById"))
     (r/render-component 
-     [comment-box] 
+     [comment-box data] 
      (.getElementById js/document "root"))))
 
