@@ -1,3 +1,0 @@
-{:require [modern-cljs.core]
- :compiler-options {:asset-path "scripts/main.out"}}
-

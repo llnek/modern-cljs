@@ -20,3 +20,6 @@ pom.xml
 .repl
 .nrepl-history
 .nrepl-port
+.cljs_rhino_repl/
+
+
