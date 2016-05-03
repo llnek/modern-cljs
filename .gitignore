@@ -1,6 +1,8 @@
 .DS_Store
 /repl
+/crap
 /target
+/public
 /lib
 /classes
 /checkouts
